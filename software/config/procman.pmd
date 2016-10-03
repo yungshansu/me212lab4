@@ -4,32 +4,45 @@ cmd "0-roscore" {
     host = "localhost";
 }
 
+
+cmd "1-kinect" {
+    exec = "roslaunch freenect_launch freenect.launch depth_registration:=true";
+    host = "localhost";
+}
+
+cmd "1-kinect-calibrate" {
+    exec = "rosrun camera_calibration cameracalibrator.py --size 9x7 --square 0.024 image:=/camera/rgb/image_color";
+    host = "localhost";
+}
+
 cmd "2-rviz" {
     exec = "roslaunch me212cv viz.launch";
     host = "localhost";
 }
 
-cmd "3-kinect" {
-    exec = "roslaunch freenect_launch freenect.launch depth_registration:=true";
-    host = "localhost";
-}
-
-cmd "7-cameratf" {
+cmd "3-cameratf" {
     exec = "roslaunch me212cv frames.launch";
     host = "localhost";
 }
 
-cmd "8-object-detection" {
+cmd "4-object-detection" {
     exec = "rosrun me212cv object_detection.py";
     host = "localhost";
 }
 
-script "run-task1" {
+script "run-kinect-calibrate" {
     start cmd "0-roscore";
     wait ms 1000;
-    start cmd "7-cameratf";
+    start cmd "1-kinect";
+    start cmd "1-kinect-calibrate";
+}
+
+script "run-all" {
+    start cmd "0-roscore";
+    wait ms 1000;
+    start cmd "1-kinect";
     start cmd "2-rviz";
-    start cmd "3-kinect";
-    start cmd "8-object-detection";
+    start cmd "3-cameratf";
+    start cmd "4-object-detection";
 }
 
