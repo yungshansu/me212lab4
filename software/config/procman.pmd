@@ -1,0 +1,35 @@
+
+cmd "0-roscore" {
+    exec = "roscore";
+    host = "localhost";
+}
+
+cmd "2-rviz" {
+    exec = "roslaunch me212cv viz.launch";
+    host = "localhost";
+}
+
+cmd "3-kinect" {
+    exec = "roslaunch freenect_launch freenect.launch depth_registration:=true";
+    host = "localhost";
+}
+
+cmd "7-cameratf" {
+    exec = "roslaunch me212cv frames.launch";
+    host = "localhost";
+}
+
+cmd "8-object-detection" {
+    exec = "rosrun me212cv object_detection.py";
+    host = "localhost";
+}
+
+script "run-task1" {
+    start cmd "0-roscore";
+    wait ms 1000;
+    start cmd "7-cameratf";
+    start cmd "2-rviz";
+    start cmd "3-kinect";
+    start cmd "8-object-detection";
+}
+
