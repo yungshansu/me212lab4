@@ -39,8 +39,8 @@ cy = msg.K[5]
 
 def main():
     
-    useHSV = True  
-    useDepth = True
+    useHSV = False  
+    useDepth = False
     if not useHSV:
         # init a cv window
         cv2.namedWindow("image")
