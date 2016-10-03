@@ -140,11 +140,11 @@ def rosHSVImageVizCallBack(msg):
         
     hsv = cv2.cvtColor(cv_image, cv2.COLOR_BGR2HSV)
     
-    # define range of blue color in HSV (Change the thresholds here)
+    # define range of red color in HSV (Change the thresholds here)
     lower_red = np.array([170,50,50])
     upper_red = np.array([180,255,255])
 
-    # Threshold the HSV image to get only blue colors
+    # Threshold the HSV image to get only red colors
     mask = cv2.inRange(hsv, lower_red, upper_red)
     
     mask_eroded         = cv2.erode(mask, None,iterations = 3)
@@ -182,11 +182,11 @@ def rosRGBDCallBack(rgb_data, depth_data):
         
     hsv = cv2.cvtColor(cv_image, cv2.COLOR_BGR2HSV)
     
-    # define range of blue color in HSV (Change the thresholds here as in Task 2)
+    # define range of red color in HSV (Change the thresholds here as in Task 2)
     lower_red = np.array([170,50,50])
     upper_red = np.array([180,255,255])
 
-    # Threshold the HSV image to get only blue colors
+    # Threshold the HSV image to get only red colors
     mask = cv2.inRange(hsv, lower_red, upper_red)
     
     mask_eroded         = cv2.erode(mask, None,iterations = 3)
