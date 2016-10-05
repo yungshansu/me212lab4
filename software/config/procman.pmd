@@ -11,7 +11,7 @@ cmd "1-kinect" {
 }
 
 cmd "1-kinect-calibrate" {
-    exec = "rosrun camera_calibration cameracalibrator.py --size 9x7 --square 0.024 image:=/camera/rgb/image_color";
+    exec = "rosrun camera_calibration cameracalibrator.py --size 8x6 --square 0.025 image:=/camera/rgb/image_color";
     host = "localhost";
 }
 
@@ -37,7 +37,7 @@ script "run-kinect-calibrate" {
     start cmd "1-kinect-calibrate";
 }
 
-script "run-all" {
+script "run-object-detect" {
     start cmd "0-roscore";
     wait ms 1000;
     start cmd "1-kinect";
