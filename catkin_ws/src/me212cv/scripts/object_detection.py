@@ -57,8 +57,8 @@ def main():
         else:
             # Task 3: Use Kinect depth data
             #    Subscribe to both RGB and Depth images with a Synchronizer
-            image_sub = message_filters.Subscriber("camera/rgb/image_rect_color", Image)
-            depth_sub = message_filters.Subscriber("camera/depth_registered/image", Image)
+            image_sub = message_filters.Subscriber("/camera/rgb/image_rect_color", Image)
+            depth_sub = message_filters.Subscriber("/camera/depth_registered/image", Image)
 
             ts = message_filters.ApproximateTimeSynchronizer([image_sub, depth_sub], 10, 0.5)
             ts.registerCallback(rosRGBDCallBack)
@@ -109,8 +109,6 @@ def rosHSVProcessCallBack(msg):
         centerx, centery = xp+w/2, yp+h/2
         showPyramid(centerx, centery, zc, w, h)
     
-    showImageInCVWindow(cv_image, mask_image)
-
 # Task 2 object detection code
 def HSVObjectDetection(cv_image, toPrint = True):
     # convert image to HSV color space
@@ -129,6 +127,7 @@ def HSVObjectDetection(cv_image, toPrint = True):
     if toPrint:
         print 'hsv', hsv_image[240][320] # the center point hsv
 
+    showImageInCVWindow(cv_image, mask_eroded, mask_eroded_dilated)
     contours,hierarchy = cv2.findContours(mask_eroded_dilated,cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
     return contours, mask
 
@@ -158,8 +157,6 @@ def rosRGBDCallBack(rgb_data, depth_data):
         
         showPyramid(centerx, centery, zc, w, h)
 
-    showImageInCVWindow(cv_image, mask_image)
-
 def getXYZ(xp, yp, zc, fx,fy,cx,cy):
     # xn = ??
     # yn = ??
@@ -167,7 +164,7 @@ def getXYZ(xp, yp, zc, fx,fy,cx,cy):
     # yc = ??
     return (xc,yc,zc)
 
-def showImageInCVWindow(cv_image, mask_image):
+def showImageInCVWindow(cv_image, mask_erode_image, mask_image):
     # Bitwise-AND mask and original image
     res = cv2.bitwise_and(cv_image, cv_image, mask = mask_image)
     
@@ -177,7 +174,8 @@ def showImageInCVWindow(cv_image, mask_image):
     
     # Show the images
     cv2.imshow('OpenCV_Original', cv_image)
-    cv2.imshow('OpenCV_Mask', mask_image)
+    cv2.imshow('OpenCV_Mask_Erode', mask_erode_image)
+    cv2.imshow('OpenCV_Mask_Dilate', mask_image)
     cv2.imshow('OpenCV_View', res)
     cv2.waitKey(3)
 
