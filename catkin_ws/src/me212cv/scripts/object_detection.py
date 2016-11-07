@@ -122,7 +122,7 @@ def HSVObjectDetection(cv_image, toPrint = True):
         print 'hsv', hsv_image[240][320] # the center point hsv
 
     showImageInCVWindow(cv_image, mask_eroded, mask_eroded_dilated)
-    contours,hierarchy = cv2.findContours(mask_eroded_dilated,cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
+    image,contours,hierarchy = cv2.findContours(mask_eroded_dilated,cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
     return contours, mask
 
 # Task 3 callback
