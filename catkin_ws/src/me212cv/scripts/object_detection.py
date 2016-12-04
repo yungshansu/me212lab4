@@ -19,7 +19,13 @@ import math
 rospy.init_node('object_detection', anonymous=True)
 
 # Publisher for publishing pyramid marker in rviz
-vis_pub = rospy.Publisher('visualization_marker', Marker, queue_size=10) 
+vis_pub = rospy.Publisher('/visualization_marker', Marker, queue_size=10) 
+
+# Publisher for publishing images in rviz
+img_pub1 = rospy.Publisher('/object_detection/image_with_cross', Image, queue_size=10)
+img_pub2 = rospy.Publisher('/object_detection/mask_eroded', Image, queue_size=10)
+img_pub3 = rospy.Publisher('/object_detection/mask_eroded_dilated', Image, queue_size=10)
+img_pub4 = rospy.Publisher('/object_detection/img_result', Image, queue_size=10)
 
 # Bridge to convert ROS Image type to OpenCV Image type
 cv_bridge = CvBridge()  
@@ -68,8 +74,10 @@ def rosImageVizCallback(msg):
 
     # 2. visualize it in a cv window
     cv2.imshow("OpenCV_View", cv_image)
+
+    # set callback func for mouse hover event
     cv2.setMouseCallback("OpenCV_View", cvWindowMouseCallBackFunc)
-    cv2.waitKey(30)
+    cv2.waitKey(3)  # milliseconds
 
 # Task 1 callback for mouse event
 def cvWindowMouseCallBackFunc(event, xp, yp, flags, param):
@@ -121,9 +129,9 @@ def HSVObjectDetection(cv_image, toPrint = True):
     if toPrint:
         print 'hsv', hsv_image[240][320] # the center point hsv
 
-    showImageInCVWindow(cv_image, mask_eroded, mask_eroded_dilated)
+    showImage(cv_image, mask_eroded, mask_eroded_dilated)
     image,contours,hierarchy = cv2.findContours(mask_eroded_dilated,cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
-    return contours, mask
+    return contours, mask_eroded_dilated
 
 # Task 3 callback
 def rosRGBDCallBack(rgb_data, depth_data):
@@ -158,7 +166,8 @@ def getXYZ(xp, yp, zc, fx,fy,cx,cy):
     # yc = ??
     return (xc,yc,zc)
 
-def showImageInCVWindow(cv_image, mask_erode_image, mask_image):
+
+def showImage(cv_image, mask_erode_image, mask_image):
     # Bitwise-AND mask and original image
     res = cv2.bitwise_and(cv_image, cv_image, mask = mask_image)
     
@@ -166,12 +175,18 @@ def showImageInCVWindow(cv_image, mask_erode_image, mask_image):
     cv2.line(cv_image, (320, 235), (320, 245), (255,0,0))
     cv2.line(cv_image, (325, 240), (315, 240), (255,0,0))
     
-    # Show the images
-    cv2.imshow('OpenCV_Original', cv_image)
-    cv2.imshow('OpenCV_Mask_Erode', mask_erode_image)
-    cv2.imshow('OpenCV_Mask_Dilate', mask_image)
-    cv2.imshow('OpenCV_View', res)
-    cv2.waitKey(3)
+    # Show the images in cv window (may freeze in ROS Kinetic/16.04)
+    #  cv2.imshow('OpenCV_Original', cv_image)
+    #  cv2.imshow('OpenCV_Mask_Erode', mask_erode_image)
+    #  cv2.imshow('OpenCV_Mask_Dilate', mask_image)
+    #  cv2.imshow('OpenCV_View', res)
+    #  cv2.waitKey(3)
+    
+    # Publish the images to ROS and show it in rviz
+    img_pub1.publish(cv_bridge.cv2_to_imgmsg(cv_image, encoding="passthrough"))
+    img_pub2.publish(cv_bridge.cv2_to_imgmsg(mask_erode_image, encoding="passthrough"))
+    img_pub3.publish(cv_bridge.cv2_to_imgmsg(mask_image, encoding="passthrough"))
+    img_pub4.publish(cv_bridge.cv2_to_imgmsg(res, encoding="passthrough"))
 
 # Create a pyramid using 4 triangles
 def showPyramid(xp, yp, zc, w, h):
