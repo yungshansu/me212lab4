@@ -187,13 +187,11 @@ def showImage(cv_image, mask_erode_image, mask_image):
     #  cv2.imshow('OpenCV_Mask_Dilate', mask_image)
     #  cv2.imshow('OpenCV_View', res)
     #  cv2.waitKey(3)
-    print 'test'
     # Publish the images to ROS and show it in rviz
     img_pub1.publish(cv_bridge.cv2_to_imgmsg(cv_image, encoding="passthrough"))
     img_pub2.publish(cv_bridge.cv2_to_imgmsg(mask_erode_image, encoding="passthrough"))
     img_pub3.publish(cv_bridge.cv2_to_imgmsg(mask_image, encoding="passthrough"))
     img_pub4.publish(cv_bridge.cv2_to_imgmsg(res, encoding="passthrough"))
-    print 'test2'
 # Create a pyramid using 4 triangles
 def showPyramid(xp, yp, zc, w, h):
     # X1-X4 are the 4 corner points of the base of the pyramid
