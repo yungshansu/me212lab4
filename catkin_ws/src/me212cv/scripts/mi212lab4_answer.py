@@ -43,7 +43,7 @@ cy = msg.P[6]
 
 def main():
     useHSV   = True
-    useDepth = False
+    useDepth = True
     if not useHSV:
         # Task 1
         # subscribe to image
@@ -58,7 +58,8 @@ def main():
             #    Subscribe to both RGB and Depth images with a Synchronizer
             image_sub = message_filters.Subscriber("/camera/rgb/image_rect_color", Image)
             #depth_sub = message_filters.Subscriber("/camera/depth_registered/image_raw", Image)	#Asus Xtion
-            depth_sub = message_filters.Subscriber("/camera/depth/image_raw", Image)		#Realsense
+            depth_sub = message_filters.Subscriber("/camera/depth_registered/sw_registered/image_rect", Image)    
+
 
             ts = message_filters.ApproximateTimeSynchronizer([image_sub, depth_sub], 10, 0.5)
             ts.registerCallback(rosRGBDCallBack)
